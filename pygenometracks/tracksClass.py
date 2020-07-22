@@ -196,7 +196,8 @@ class PlotTracks(object):
         return track_height
 
     def plot(self, file_name, chrom, start, end, title=None,
-             h_align_titles='left', decreasing_x_axis=False):
+             h_align_titles='left', decreasing_x_axis=False,
+             save_file=True, label_left=False):
         track_height = self.get_tracks_height(start_region=start,
                                               end_region=end)
 
@@ -219,9 +220,15 @@ class PlotTracks(object):
         if title:
             fig.suptitle(title)
 
+        width_ratios = self.width_ratios
+        horizontal_grid_index = [1, 0, 2]
+        if label_left:
+            width_ratios = (width_ratios[-1], *width_ratios[:2])
+            horizontal_grid_index = [2, 1, 0]
+
         grids = matplotlib.gridspec.GridSpec(len(track_height), 3,
                                              height_ratios=track_height,
-                                             width_ratios=self.width_ratios,
+                                             width_ratios=width_ratios,
                                              wspace=0.01)
         axis_list = []
         # skipped_tracks is the count of tracks that have the
@@ -241,17 +248,17 @@ class PlotTracks(object):
                 ylim = plot_axis.get_ylim()
             else:
                 idx -= skipped_tracks
-                plot_axis = axisartist.Subplot(fig, grids[idx, 1])
+                plot_axis = axisartist.Subplot(fig, grids[idx, horizontal_grid_index[0]])
                 fig.add_subplot(plot_axis)
                 # turns off the lines around the tracks
                 plot_axis.axis[:].set_visible(False)
                 # to make the background transparent
                 plot_axis.patch.set_visible(False)
                 if not overlay:
-                    y_axis = plt.subplot(grids[idx, 0])
+                    y_axis = plt.subplot(grids[idx, horizontal_grid_index[1]])
                     y_axis.set_axis_off()
 
-                    label_axis = plt.subplot(grids[idx, 2])
+                    label_axis = plt.subplot(grids[idx, horizontal_grid_index[2]])
                     label_axis.set_axis_off()
                     # I get the width of the label_axis to be able to wrap the
                     # labels when right or center aligned.
@@ -275,8 +282,9 @@ class PlotTracks(object):
 
         if self.vlines_intval_tree:
             self.plot_vlines(axis_list, chrom, start, end)
-
-        fig.savefig(file_name, dpi=self.dpi, transparent=False)
+        if save_fig:
+            fig.savefig(file_name, dpi=self.dpi, transparent=False)
+        self.fig = fig
         return fig.get_size_inches()
 
     def plot_vlines(self, axis_list, chrom_region, start_region, end_region):

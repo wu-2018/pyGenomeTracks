@@ -1,3 +1,59 @@
+# Modifications
+
+*Currently just tested for ChIP-seq data.*
+
+## Adding Python interface  
+
+- Don't have to run it only as a commandline tool!  Getting the figure object directly in Python and make it possible for better integration and customization. 
+ 
+```python
+INI_FILE = 'data/chipseq.ini'
+CHR_RANGE = '8', 107543000, 107547000'
+
+import pygenometracks.plotTracks as pT
+from pygenometracks.tracksClass import PlotTracks
+
+trp = PlotTracks(INI_FILE, fig_width=45, fig_height=15,
+                 dpi=130, track_label_width=0.2)
+trp.plot('', *CHR_RANGE, title='',
+         h_align_titles='right',
+         decreasing_x_axis=False, save_file=False)
+```
+
+Using `.fig` to get the generated matplotlib figure object.  
+
+```python
+fig = trp.fig
+type(fig)
+```
+       matplotlib.figure.Figure
+       
+Inside Jupyter:  
+```
+%matplotlib inline
+fig
+```
+
+![png](demo/output_6_0.png)  
+
+- Placing labels on the left side:  
+   Set the `label_left` argument to `True`.  
+   
+```python
+trp.plot('', *CHR_RANGE, title='',
+         h_align_titles='right',
+         decreasing_x_axis=False, save_file=False, label_left=True)
+trp.fig
+```
+  
+![png](demo/output_13_2.png)
+
+For more details, see [demo.ipynb](demo/demo.ipynb).  
+
+
+# the original version:
+---
+
 [![PyPI Version](https://img.shields.io/pypi/v/pyGenomeTracks.svg?style=plastic)](https://pypi.org/project/pyGenomeTracks/) [![bioconda-badge](https://img.shields.io/conda/vn/bioconda/pyGenomeTracks.svg?style=plastic)](https://anaconda.org/bioconda/pygenometracks)
 [![bioconda-badge](https://img.shields.io/badge/install%20with-bioconda-brightgreen.svg?style=plastic)](http://bioconda.github.io)
 [![Build Status](https://travis-ci.org/deeptools/pyGenomeTracks.svg?branch=master)](https://travis-ci.org/deeptools/pyGenomeTracks)
