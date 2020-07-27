@@ -282,7 +282,7 @@ class PlotTracks(object):
 
         if self.vlines_intval_tree:
             self.plot_vlines(axis_list, chrom, start, end)
-        if save_fig:
+        if save_file:
             fig.savefig(file_name, dpi=self.dpi, transparent=False)
         self.fig = fig
         return fig.get_size_inches()
